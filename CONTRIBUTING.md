@@ -16,16 +16,16 @@
 ### Setup
 
 #### Repository Setup
-1. Clone the repository `git clone https://github.com/WFP-Doobelepers/HuTao.git`
+1. Clone the repository `git clone https://github.com/sabihoshi/Aida.git`
 2. Restore the projects with `dotnet restore`.
 
 #### User Secrets
 The location will be found according to the documentation for [user secrets](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets) in here.
-  * The `<user_secrets_id>` is stored in `./HuTao.Data/HuTao.Data.csproj`.
+  * The `<user_secrets_id>` is stored in `./Aida.Data/Aida.Data.csproj`.
   * `Owner: ulong` - The User ID of the owner of the bot, this doesn't really do anything yet.
   * `Prefix: string` - The prefix that the bot will be using.
   * `Token: string` - The bot's token.
-  * `HuTaoContext: string` - The postgres connection string for the bot's data itself, including but not limited to server configuration, users, logging, and moderation.
+  * `AidaContext: string` - The postgres connection string for the bot's data itself, including but not limited to server configuration, users, logging, and moderation.
   * `HangfireContext: string` - The postgres connection string for the Hangfire library, this is used for tasks related to timing.
   * `MessageCacheSize: int` - The cache size for messages. Keep this to 100.
 
@@ -36,10 +36,10 @@ The location will be found according to the documentation for [user secrets](htt
 >       "Owner": 0,
 >       "Guild": 0,
 >       "GatewayIntents": 98047,
->       "Prefix": "h!",
+>       "Prefix": "h.",
 >       "AlwaysDownloadUsers": true,
 >       "Token": "ABCD.EFGH.IJKL",
->       "HuTaoContext": "Server=127.0.0.1;Port=5432;Database=HuTao;User Id=postgres;Password=[password];",
+>       "AidaContext": "Server=127.0.0.1;Port=5432;Database=Aida;User Id=postgres;Password=[password];",
 >       "HangfireContext": "Server=127.0.0.1;Port=5432;Database=Hangfire;User Id=postgres;Password=[password];",
 >       "MessageCacheSize": 100
 >     },
@@ -51,7 +51,7 @@ The location will be found according to the documentation for [user secrets](htt
 
 #### Database Setup
 1. Install the dotnet-ef tools by running `dotnet tool install --global dotnet-ef`
-2. Run `dotnet ef database update --project ./HuTao.Data/HuTao.Data.csproj` to create the HuTaoContext database.
+2. Run `dotnet ef database update --project ./Aida.Data/Aida.Data.csproj` to create the AidaContext database.
 3. Create an empty database with the same name that the `HangfireContext` uses.
   > You can use the command `CREATE DATABASE HangfireContextName` in the `psql.exe` program found in the installation of postgres. [Guide](https://www.microfocus.com/documentation/idol/IDOL_12_0/MediaServer/Guides/html/English/Content/Getting_Started/Configure/_TRN_Set_up_PostgreSQL.htm)
 
@@ -78,7 +78,7 @@ Commits should not be made directly on the `main` branch. The name of the branch
 > `sabihoshi/role-management`
 
 ### Making a pull request
-Tasks are broken down in the [HuTao Project](https://github.com/WFP-Doobelepers/HuTao/projects/1), if you are tackling a specific task, create a Pull Request targeting that specific issue. You can link the PR in two ways:
+Tasks are broken down in the [Aida Project](https://github.com/sabihoshi/Aida/projects/1), if you are tackling a specific task, create a Pull Request targeting that specific issue. You can link the PR in two ways:
 1. Link the Issue to the PR by vising the Issue and then under ["Linked pull requests"](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue#manually-linking-a-pull-request-to-an-issue), link the PR that you just made.
 2. Add the keywords in the PR's description according to the [GitHub docs](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue).
 

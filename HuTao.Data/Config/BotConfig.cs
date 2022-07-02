@@ -12,7 +12,7 @@ public class BotConfig
 
     public string HangfireContext { get; init; } = null!;
 
-    public string HuTaoContext { get; init; } = null!;
+    public string AidaContext { get; init; } = null!;
 
     public string Prefix { get; init; } = null!;
 

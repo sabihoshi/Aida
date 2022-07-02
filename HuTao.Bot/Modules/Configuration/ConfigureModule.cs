@@ -190,7 +190,6 @@ public class ConfigureModule : ModuleBase<SocketCommandContext>
 
         var mod = rules.Logging;
         var log = guild.LoggingRules;
-        var time = guild.GenshinRules;
         var voice = guild.VoiceChatRules;
 
         var embeds = new List<Embed>
@@ -225,19 +224,6 @@ public class ConfigureModule : ModuleBase<SocketCommandContext>
                 .Build()
         };
 
-        if (time is not null)
-        {
-            embeds.Add(new EmbedBuilder()
-                .WithTitle("Genshin Configuration")
-                .AddField("Server Status", time.ServerStatus?.JumpUrl ?? "Not configured")
-                .AddField(Tracking("America", time.AmericaChannel))
-                .AddField(Tracking("Asia", time.AsiaChannel))
-                .AddField("_ _", "_ _")
-                .AddField(Tracking("Europe", time.EuropeChannel))
-                .AddField(Tracking("SAR", time.SARChannel))
-                .Build());
-        }
-
         if (voice is not null)
         {
             embeds.Add(new EmbedBuilder()
@@ -271,11 +257,6 @@ public class ConfigureModule : ModuleBase<SocketCommandContext>
 
         static string Logging(IGrouping<ulong, EnumChannel<LogType>> g)
             => $"{MentionChannel(g.Key)}: {g.Humanize(l => l.Type.Humanize(Title))}";
-
-        static EmbedFieldBuilder Tracking(string title, IChannelEntity? tracking)
-            => new EmbedFieldBuilder()
-                .WithName($"{title} Server Time").WithIsInline(true)
-                .WithValue(tracking?.MentionChannel() ?? "Not configured");
 
         static string Length(TimeSpan? length) => length?.Humanize() ?? "Indefinite";
 

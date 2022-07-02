@@ -23,7 +23,6 @@ using HuTao.Services.Logging;
 using HuTao.Services.Moderation;
 using HuTao.Services.Quote;
 using HuTao.Services.Sticky;
-using HuTao.Services.TimeTracking;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -75,7 +74,6 @@ public class Bot
             .AddScoped<StickyService>()
             .AddScoped<LinkingService>()
             .AddScoped<LinkedCommandService>()
-            .AddScoped<GenshinTimeTrackingService>()
             .AddSingleton<IQuoteService, QuoteService>()
             .AddExpirableServices()
             .AddAutoRemoveMessage()
@@ -191,6 +189,7 @@ public class Bot
         interaction.Log += LogAsync;
 
         await client.LoginAsync(TokenType.Bot, HuTaoConfig.Configuration.Token);
+        await client.SetGameAsync("our Omnium excavation!", "https://twitch.tv/miakitchen", ActivityType.Streaming);
         await client.StartAsync();
 
         using var server = new BackgroundJobServer();
@@ -200,7 +199,7 @@ public class Bot
 
     private static void ContextOptions(DbContextOptionsBuilder optionsBuilder) => optionsBuilder
         .UseLazyLoadingProxies()
-        .UseNpgsql(HuTaoConfig.Configuration.HuTaoContext);
+        .UseNpgsql(HuTaoConfig.Configuration.AidaContext);
 
     private static void FailFast()
         => Environment.Exit(1);
