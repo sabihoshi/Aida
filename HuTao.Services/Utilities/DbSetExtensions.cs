@@ -44,6 +44,16 @@ public static class DbSetExtensions
     }
 
     public static async ValueTask<GuildUserEntity> TrackUserAsync(
+        this DbSet<GuildUserEntity> set, ulong user, ulong guild,
+        CancellationToken cancellationToken = default)
+    {
+        var userEntity = await set.FindAsync(new object[] { user, guild }, cancellationToken)
+            ?? set.Add(new GuildUserEntity(user, guild)).Entity;
+
+        return userEntity;
+    }
+
+    public static async ValueTask<GuildUserEntity> TrackUserAsync(
         this DbSet<GuildUserEntity> set, ReprimandDetails details,
         CancellationToken cancellationToken = default)
     {

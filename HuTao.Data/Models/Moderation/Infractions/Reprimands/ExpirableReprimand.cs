@@ -15,6 +15,13 @@ public abstract class ExpirableReprimand : Reprimand, IExpirable
         ExpireAt  = StartedAt + Length;
     }
 
+    protected ExpirableReprimand(TimeSpan? length, ReprimandShort details) : base(details)
+    {
+        Length    = length;
+        StartedAt = DateTimeOffset.UtcNow;
+        ExpireAt  = StartedAt + Length;
+    }
+
     public DateTimeOffset StartedAt { get; set; }
 
     public DateTimeOffset? EndedAt { get; set; }

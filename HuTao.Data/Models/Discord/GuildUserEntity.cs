@@ -12,6 +12,12 @@ public class GuildUserEntity
 
     public GuildUserEntity(IGuildUser user) : this(user, user.Guild) { JoinedAt = user.JoinedAt?.ToUniversalTime(); }
 
+    public GuildUserEntity(ulong userId, ulong guildId)
+    {
+        Id      = userId;
+        GuildId = guildId;
+    }
+
     public GuildUserEntity(IUser user, IGuild guild)
     {
         Id      = user.Id;

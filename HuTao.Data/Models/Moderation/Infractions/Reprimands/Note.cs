@@ -5,4 +5,6 @@ public class Note : Reprimand, INote
     protected Note() { }
 
     public Note(ReprimandDetails details) : base(details) { }
+
+    public Note(ReprimandShort details) : base(details) { }
 }

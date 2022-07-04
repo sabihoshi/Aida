@@ -37,14 +37,14 @@ public class UserTypeReader<T> : TypeReader where T : class, IUser
                 var guildUser = await context.Guild.GetUserAsync(id, _cacheMode).ConfigureAwait(false);
                 var user = await GetUserAsync(context.Client, guildUser, id);
 
-                await AddResultAsync(results, user, 1.00f);
+                await AddResultAsync(user, 1.00f);
             }
             else
             {
                 var channelUser = await context.Channel.GetUserAsync(id, _cacheMode).ConfigureAwait(false);
                 var user = await GetUserAsync(context.Client, channelUser, id);
 
-                await AddResultAsync(results, user, 1.00f);
+                await AddResultAsync(user, 1.00f);
             }
         }
 
@@ -56,15 +56,18 @@ public class UserTypeReader<T> : TypeReader where T : class, IUser
                 var guildUser = await context.Guild.GetUserAsync(id, _cacheMode).ConfigureAwait(false);
                 var user = await GetUserAsync(context.Client, guildUser, id);
 
-                await AddResultAsync(results, user, 0.90f);
+                await AddResultAsync(user, 0.90f);
             }
             else
             {
                 var channelUser = await context.Channel.GetUserAsync(id, _cacheMode).ConfigureAwait(false);
                 var user = await GetUserAsync(context.Client, channelUser, id);
 
-                await AddResultAsync(results, user, 0.90f);
+                await AddResultAsync(user, 0.90f);
             }
+
+            var clientUser = await context.Client.GetUserAsync(id);
+            await AddResultAsync(clientUser as T, 0.90f);
         }
 
         if (context.Guild is not null)
@@ -84,8 +87,11 @@ public class UserTypeReader<T> : TypeReader where T : class, IUser
                         .Where(u => string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase))
                         .Where(u => u.DiscriminatorValue == discriminator))
                     {
-                        await AddResultAsync(results, user as T, user.Username == username ? 0.85f : 0.80f);
+                        await AddResultAsync(user as T, user.Username == username ? 0.85f : 0.80f);
                     }
+
+                    var clientUser = await context.Client.GetUserAsync(username, $"{discriminator}");
+                    await AddResultAsync(clientUser as T, 0.85f);
                 }
             }
             else
@@ -98,14 +104,28 @@ public class UserTypeReader<T> : TypeReader where T : class, IUser
                 var usernames = search.Where(u => string.Equals(input, u.Username, StringComparison.OrdinalIgnoreCase));
                 foreach (var user in usernames)
                 {
-                    await AddResultAsync(results, user as T, user.Username == input ? 0.65f : 0.55f);
+                    await AddResultAsync(user as T, user.Username == input ? 0.65f : 0.55f);
                 }
 
                 // By Nickname (0.5-0.6)
                 var nicknames = search.Where(u => string.Equals(input, u.Nickname, StringComparison.OrdinalIgnoreCase));
                 foreach (var user in nicknames)
                 {
-                    await AddResultAsync(results, user as T, user.Nickname == input ? 0.65f : 0.55f);
+                    await AddResultAsync(user as T, user.Nickname == input ? 0.65f : 0.55f);
+                }
+            }
+        }
+        else
+        {
+            // By Username + Discriminator (0.85)
+            var index = input.LastIndexOf('#');
+            if (index >= 0)
+            {
+                var username = input[..index];
+                if (ushort.TryParse(input[(index + 1)..], out var discriminator))
+                {
+                    var clientUser = await context.Client.GetUserAsync(username, $"{discriminator}");
+                    await AddResultAsync(clientUser as T, 0.85f);
                 }
             }
         }
@@ -113,14 +133,14 @@ public class UserTypeReader<T> : TypeReader where T : class, IUser
         return results.Count > 0
             ? TypeReaderResult.FromSuccess(results.Values.ToImmutableArray())
             : TypeReaderResult.FromError(CommandError.ObjectNotFound, "User not found.");
-    }
 
-    private async Task AddResultAsync(IDictionary<ulong, TypeReaderValue> results, T? user, float score)
-    {
-        if (user is not null && !results.ContainsKey(user.Id))
+        async Task AddResultAsync(T? user, float score)
         {
-            results.Add(user.Id, new TypeReaderValue(user, score));
-            if (user is IGuildUser guild) await _db.Users.TrackUserAsync(guild);
+            if (user is not null && !results.ContainsKey(user.Id))
+            {
+                results.Add(user.Id, new TypeReaderValue(user, score));
+                if (user is IGuildUser guild) await _db.Users.TrackUserAsync(guild);
+            }
         }
     }
 
